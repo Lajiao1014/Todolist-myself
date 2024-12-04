@@ -3,19 +3,28 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
+  padding: 0;
+  --background: transparent;
   --foreground: #171717;
+}
+
+html {
+  padding: 0;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: transparent;
     --foreground: #ededed;
   }
 }
 
 body {
+  padding: 0;
   color: var(--foreground);
-  background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.custom-gradient {
+  background: linear-gradient(135deg, #153677, #4e085f);
 }

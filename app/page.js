@@ -1,101 +1,105 @@
+'use client'
 import Image from "next/image";
+import { useState, useEffect } from "react";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.js
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [todos, setTodos] = useState(() => {
+    const savedTodos = localStorage.getItem('todos');
+    return savedTodos ? JSON.parse(savedTodos) : [];
+  });
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const [inputValue, setInputValue] = useState("");
+
+  useEffect(() => {
+    localStorage.setItem('todos', JSON.stringify(todos));
+  }, [todos]);
+
+  const handleAddTodo = () => {
+    if (inputValue !== '') {
+      setTodos([...todos, {
+        text: inputValue,
+        completed: false
+      }]);
+      setInputValue('');
+    }
+  };
+  //Enter
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleAddTodo();
+    }
+  };
+
+  const complete = (index) => {
+    const newTodos = [...todos]
+    newTodos[index].completed = !newTodos[index].completed
+    setTodos(newTodos)
+  };
+
+  const handleDelete = (index) => {
+    const newTodos = todos.filter((_, i) => i !== index);
+    setTodos(newTodos);
+  };
+
+  return (
+    <>
+      <div className="custom-gradient h-[100vh] w-full flex justify-center items-center">
+        <div className="w-[400px] min-h-[200px] rounded-lg bg-[#ffffff] flex flex-col items-center p-4">
+          <div className="w-[350px] bg-[#ffffff]">
+            <div className="flex">
+              <div className="font-bold text-2xl text-black">
+                To-Do List
+              </div>
+              <img src="/todo.png" className="w-[25px] h-[25px] m-[5px]" />
+            </div>
+            <div className="flex items-center justify-center bg-[#edeef0] rounded-[30px] pl-[20px] mb-[25px] mt-[10px] h-[30px]">
+              <input
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={handleKeyPress}
+                placeholder="Add your text"
+                className="flex-1 border-none outline-none bg-transparent p-[10px] text-[14px] text-black"
+              />
+              <button
+                onClick={handleAddTodo}
+                className="border-none outline-none px-[50px] bg-[#ff5945] text-white text-[16px] cursor-pointer rounded-[40px] h-[30px]"
+              >
+                Add
+              </button>
+            </div>
+
+            <ul className="list-none p-0">
+              {todos.map((todo, index) => (
+                <li
+                  key={index}
+                  className="flex items-center justify-between bg-[#edeef0] rounded-[30px] pl-[20px] mb-[10px] h-[30px]"
+                >
+                  <div className="flex items-center">
+                    <img
+                      src="/checkbox.png"
+                      className={`w-[20px] h-[20px] mr-[5px] cursor-pointer ${todo.completed ? 'opacity-50' : ''}`}
+                      onClick={() => complete(index)}
+                    />
+                    <span
+                      className={`text-[14px] text-black ${todo.completed ? 'line-through text-gray-500' : ''
+                        }`}
+                    >
+                      {todo.text}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => handleDelete(index)}
+                    className="border-none outline-none px-[20px] text-black text-[14px] cursor-pointer rounded-r-[30px] h-[30px]"
+                  >
+                    x
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </div>
+    </>
   );
 }
