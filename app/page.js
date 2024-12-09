@@ -1,12 +1,11 @@
 'use client'
 import { useState } from "react";
-import { Provider } from 'react-redux';
 import { useDispatch, useSelector } from 'react-redux';
 import { addTodo, toggleTodo, deleteTodo } from './store/todoSlice';
-import { store } from './store/store';
 
-// 創建一個新的 TodoList 組件
-function TodoList() {
+
+export default function Home() {
+
   const [inputValue, setInputValue] = useState("");
   const dispatch = useDispatch();
   const todos = useSelector((state) => state.todoList.todos);
@@ -92,12 +91,5 @@ function TodoList() {
   );
 }
 
-// 主頁面組件
-export default function Home() {
 
-  return (
-    <Provider store={store}>
-      <TodoList />
-    </Provider>
-  );
-}
+
